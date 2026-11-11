@@ -4,6 +4,7 @@ import { storageService } from '../services/storage';
 import { getTodayDateString } from '../utils/dateUtils';
 import { generateId } from '../utils/id';
 import { audioService } from '../services/audio';
+import { notificationService } from '../services/notifications';
 
 const INITIAL_DEMO_TASKS: Task[] = [
   {
@@ -42,7 +43,6 @@ export function useTasks() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [triggerConfetti, setTriggerConfetti] = useState<boolean>(false);
 
-  // Carregar tarefas do storage
   useEffect(() => {
     const loaded = storageService.getTasks();
     if (loaded.length === 0) {
@@ -53,13 +53,11 @@ export function useTasks() {
     }
   }, []);
 
-  // Salvar no storage
   const updateTasksState = useCallback((newTasks: Task[]) => {
     setTasks(newTasks);
     storageService.saveTasks(newTasks);
   }, []);
 
-  // Filtrar apenas tarefas de hoje
   const todayDate = getTodayDateString();
   const todayTasks = tasks.filter((t) => t.date === todayDate);
 
@@ -89,19 +87,18 @@ export function useTasks() {
   }, [tasks, todayDate, updateTasksState]);
 
   const toggleTaskCompletion = useCallback((id: string) => {
-    let wasCompletedNow = false;
+    let completedTaskTitle: string | null = null;
 
     const updated = tasks.map((task) => {
       if (task.id === id) {
         const nextStatus = !task.completed;
         if (nextStatus) {
-          wasCompletedNow = true;
+          completedTaskTitle = task.title;
         }
         return {
           ...task,
           completed: nextStatus,
           completedAt: nextStatus ? Date.now() : undefined,
-          // Se concluir a tarefa principal, podemos marcar subtarefas
           subtasks: nextStatus
             ? task.subtasks.map((st) => ({ ...st, completed: true }))
             : task.subtasks,
@@ -110,8 +107,9 @@ export function useTasks() {
       return task;
     });
 
-    if (wasCompletedNow) {
+    if (completedTaskTitle) {
       audioService.playCompletionSound();
+      notificationService.sendTaskCompleteNotification(completedTaskTitle);
       setTriggerConfetti(true);
       setTimeout(() => setTriggerConfetti(false), 1200);
     }
@@ -142,7 +140,7 @@ export function useTasks() {
   }, [tasks, updateTasksState]);
 
   const toggleSubtask = useCallback((taskId: string, subtaskId: string) => {
-    let allCompletedNow = false;
+    let completedTaskTitle: string | null = null;
 
     const updated = tasks.map((task) => {
       if (task.id === taskId) {
@@ -151,7 +149,7 @@ export function useTasks() {
         );
         const allDone = nextSubtasks.length > 0 && nextSubtasks.every((st) => st.completed);
         if (allDone && !task.completed) {
-          allCompletedNow = true;
+          completedTaskTitle = task.title;
         }
         return {
           ...task,
@@ -162,8 +160,9 @@ export function useTasks() {
       return task;
     });
 
-    if (allCompletedNow) {
+    if (completedTaskTitle) {
       audioService.playCompletionSound();
+      notificationService.sendTaskCompleteNotification(completedTaskTitle);
       setTriggerConfetti(true);
       setTimeout(() => setTriggerConfetti(false), 1200);
     }

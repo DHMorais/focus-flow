@@ -7,9 +7,9 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'pwa-192x192.png', 'pwa-512x512.png', 'maskable-icon-512.png'],
+      includeAssets: ['favicon.svg', 'apple-touch-icon.png', 'pwa-192x192.png', 'pwa-512x512.png', 'maskable-icon-512.png'],
       manifest: {
-        name: 'FocusFlow — Agenda para TDAH',
+        name: 'FocusFlow — Agenda TDAH',
         short_name: 'FocusFlow',
         description: 'Gerenciador de tarefas e agenda minimalista otimizado para TDAH com foco total e baixa carga cognitiva.',
         theme_color: '#0f766e',
@@ -21,12 +21,14 @@ export default defineConfig({
           {
             src: 'pwa-192x192.png',
             sizes: '192x192',
-            type: 'image/png'
+            type: 'image/png',
+            purpose: 'any'
           },
           {
             src: 'pwa-512x512.png',
             sizes: '512x512',
-            type: 'image/png'
+            type: 'image/png',
+            purpose: 'any'
           },
           {
             src: 'maskable-icon-512.png',

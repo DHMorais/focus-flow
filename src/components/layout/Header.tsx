@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Brain, Wifi, WifiOff, Sparkles } from 'lucide-react';
+import { Brain, Wifi, WifiOff, Sparkles, Bell, BellRing } from 'lucide-react';
 import { formatFormattedTodayDate } from '../../utils/dateUtils';
+import { notificationService } from '../../services/notifications';
 
 export const Header: React.FC = () => {
   const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
+  const [permission, setPermission] = useState<string>(notificationService.getPermissionState());
 
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
@@ -17,6 +19,14 @@ export const Header: React.FC = () => {
       window.removeEventListener('offline', handleOffline);
     };
   }, []);
+
+  const handleToggleNotification = async () => {
+    const granted = await notificationService.requestPermission();
+    setPermission(granted ? 'granted' : 'denied');
+    if (granted) {
+      notificationService.sendTaskCompleteNotification('Notificações ativadas com sucesso!');
+    }
+  };
 
   return (
     <header className="bg-white/80 backdrop-blur-md sticky top-0 z-30 border-b border-slate-200/80 px-4 py-3 sm:px-6">
@@ -40,6 +50,28 @@ export const Header: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2">
+          {notificationService.isSupported() && (
+            <button
+              onClick={handleToggleNotification}
+              className={`p-2 rounded-xl transition border text-xs flex items-center gap-1 ${
+                permission === 'granted'
+                  ? 'bg-teal-50 border-teal-200 text-teal-700'
+                  : 'bg-slate-100 hover:bg-slate-200 border-slate-200 text-slate-600'
+              }`}
+              title={
+                permission === 'granted'
+                  ? 'Notificações ativadas'
+                  : 'Clique para ativar notificações sonoras e visuais'
+              }
+            >
+              {permission === 'granted' ? (
+                <BellRing className="w-4 h-4 text-teal-600" />
+              ) : (
+                <Bell className="w-4 h-4" />
+              )}
+            </button>
+          )}
+
           {!isOnline ? (
             <span className="inline-flex items-center gap-1 text-xs font-medium bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full">
               <WifiOff className="w-3.5 h-3.5" />
@@ -48,7 +80,7 @@ export const Header: React.FC = () => {
           ) : (
             <span className="inline-flex items-center gap-1 text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60 px-2.5 py-1 rounded-full">
               <Wifi className="w-3.5 h-3.5" />
-              Salvo no dispositivo
+              Salvo
             </span>
           )}
         </div>
@@ -56,3 +88,4 @@ export const Header: React.FC = () => {
     </header>
   );
 };
+

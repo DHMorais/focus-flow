@@ -1,6 +1,7 @@
 import React from 'react';
 import { Task, TimePeriod } from '../../types/task';
 import { PeriodSection } from './PeriodSection';
+import { InstallFooterButton } from '../layout/InstallFooterButton';
 import { CheckCircle2, Sparkles } from 'lucide-react';
 
 interface TodayViewProps {
@@ -108,6 +109,9 @@ export const TodayView: React.FC<TodayViewProps> = ({
           Lembre-se: Se não conseguir fazer tudo hoje, está tudo bem. Ajustar suas metas faz parte da jornada.
         </p>
       </div>
+
+      {/* Botão / Seção de Instalação de PWA no Rodapé */}
+      <InstallFooterButton />
     </div>
   );
 };

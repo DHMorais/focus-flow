@@ -13,6 +13,15 @@ export const notificationService = {
     return false;
   },
 
+  isSupported(): boolean {
+    return 'Notification' in window;
+  },
+
+  getPermissionState(): NotificationPermission | 'unsupported' {
+    if (!('Notification' in window)) return 'unsupported';
+    return Notification.permission;
+  },
+
   sendFocusCompleteNotification(taskTitle?: string) {
     if ('Notification' in window && Notification.permission === 'granted') {
       const title = '🧠 Sessão de Foco Concluída!';
@@ -25,6 +34,17 @@ export const notificationService = {
         icon: '/pwa-192x192.png',
         badge: '/favicon.svg',
         tag: 'focus-timer-complete',
+      });
+    }
+  },
+
+  sendTaskCompleteNotification(taskTitle: string) {
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification('🎉 Tarefa Concluída!', {
+        body: `Excelente trabalho! Você concluiu: "${taskTitle}".`,
+        icon: '/pwa-192x192.png',
+        badge: '/favicon.svg',
+        tag: 'task-complete',
       });
     }
   }
