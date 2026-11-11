@@ -34,25 +34,7 @@ O **FocusFlow** é um aplicativo web progressivo (PWA) de alta performance, proj
 
 ---
 
-## 🚀 Como Executar o Projeto
 
-No terminal, acesse a pasta do projeto:
-
-```bash
-cd "C:\Users\dougl\.cline\data\workspaces\chat\focus-planner-pwa"
-npm run dev
-```
-
-### 📱 Como Rodar e Testar no Celular:
-Para abrir diretamente no celular conectado na mesma rede Wi-Fi:
-
-```bash
-npm run dev -- --host
-```
-O terminal exibirá um endereço como `http://192.168.x.x:5173`.
-1. Abra esse endereço no navegador do celular (Chrome ou Safari).
-2. Toque no banner **"Instalar no seu Celular"** ou no menu do navegador (**Adicionar à tela de início**).
-3. O app se tornará um aplicativo nativo no celular, funcionando inclusive no modo avião!
 
 ---
 
